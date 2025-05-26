@@ -1,0 +1,258 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+html {
+    height: 100%;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    width: 100%;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #f0f0f0;
+
+}
+
+h1,
+h2,
+h3 {
+    margin: 10px 0px;
+    padding: 10px;
+}
+
+.container {
+    background-color: #fff;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+.navbar {
+    background-color: #333 !important;
+}
+
+.navbar .nav-link {
+    color: white;
+}
+
+.navbar .nav-link:hover {
+    color: #9edba1;
+}
+
+/* Cor do título da marca na navbar */
+.navbar .navbar-brand {
+    color: #FFFFFF;
+    /* Cor do texto da marca */
+}
+
+.navbar .navbar-brand:hover {
+    color: #9edba1;
+    /* Cor quando o link for hover (dourado) */
+}
+
+/* Cor do botão de busca */
+.navbar .btn-outline-success {
+    color: #3d3d3d;
+    border-color: white;
+    background-color: white;
+    transition: background-color 0.3s, color 0.3s;
+    transition: transform 0.3s;
+}
+
+.navbar .btn-outline-success:hover {
+    background-color: #9edba1;
+    /* Cor de fundo ao passar o mouse */
+    color: #18411a;
+    /* Cor do texto quando estiver no hover */
+    border-color: #9edba1;
+    /* Cor da borda quando estiver no hover */
+    transform: scale(0.95);
+}
+
+/* Cor do campo de busca */
+.navbar .form-control {
+    background-color: #ffffff;
+    /* Cor de fundo do campo de busca */
+    color: black;
+    /* Cor do texto */
+}
+
+.button {
+    background-color: #808080;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    margin: 4px;
+    cursor: pointer;
+    width: fit-content;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s, color 0.3s;
+    transition: transform 0.3s;
+}
+
+.button a {
+    color: white;
+    text-decoration: none;
+}
+
+.button:hover {
+    background-color: #333;
+    color: white;
+    transform: scale(0.95);
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    background-color: #cacaca;
+    width: 250px;
+    height: 200px;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.botoes {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    align-self: center;
+    width: 100%;
+    align-content: center;
+    justify-items: center;
+    row-gap: 60px;
+    padding: 60px;
+}
+
+.botao {
+    background-color: #808080;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    margin: 4px;
+    cursor: pointer;
+    width: 150px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s, color 0.3s;
+    transition: transform 0.3s;
+}
+
+.botao a {
+    color: white;
+    text-decoration: none;
+}
+
+.botao:hover {
+    background-color: #333;
+    color: white;
+    transform: scale(0.95);
+}
+
+.button-show {
+    background-color: #86bad8;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    margin: 4px;
+    cursor: pointer;
+    width: fit-content;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s, color 0.3s;
+    transition: transform 0.3s;
+}
+
+.button-show a {
+    color: white;
+    text-decoration: none;
+}
+
+.button-show:hover {
+    background-color: #4d83a1;
+    color: white;
+    transform: scale(0.95);
+}
+
+.button-edit {
+    background-color: #8dd886;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    margin: 4px;
+    cursor: pointer;
+    width: fit-content;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s, color 0.3s;
+    transition: transform 0.3s;
+}
+
+.button-edit a {
+    color: white;
+    text-decoration: none;
+}
+
+.button-edit:hover {
+    background-color: #4da151;
+    color: white;
+    transform: scale(0.95);
+}
+
+.button-delete {
+    background-color: #d88686;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    margin: 4px;
+    cursor: pointer;
+    width: fit-content;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s, color 0.3s;
+    transition: transform 0.3s;
+}
+
+.button-delete a {
+    color: white;
+    text-decoration: none;
+}
+
+.button-delete:hover {
+    background-color: #a14d4d;
+    color: white;
+    transform: scale(0.95);
+}
