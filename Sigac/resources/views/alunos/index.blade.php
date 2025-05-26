@@ -2,9 +2,8 @@
 
 @section('content')
 <div class="container">
-    <h1 class="mb-4">Lista de Alunos</h1>
-    
-    <div class="mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Alunos</h1>
         <a href="{{ route('alunos.create') }}" class="btn btn-primary">
             <i class="fas fa-plus"></i> Novo Aluno
         </a>
@@ -15,39 +14,47 @@
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
+                        <th>Matrícula</th>
                         <th>Nome</th>
                         <th>CPF</th>
                         <th>Email</th>
-                        <th>Curso</th>
-                        <th>Turma</th>
+                        <th>Status</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($alunos as $aluno)
                     <tr>
+                        <td>{{ $aluno->matricula }}</td>
                         <td>{{ $aluno->nome }}</td>
-                        <td>{{ $aluno->cpf_formatado }}</td>
+                        <td>{{ $aluno->cpf }}</td>
                         <td>{{ $aluno->email }}</td>
-                        <td>{{ $aluno->curso->nome ?? '-' }}</td>
-                        <td>{{ $aluno->turma->nome ?? '-' }}</td>
                         <td>
-                            <a href="{{ route('alunos.show', $aluno->id) }}" class="btn btn-sm btn-info">
-                                <i class="fas fa-eye"></i>
-                            </a>
+                            <span class="badge bg-{{ $aluno->ativo ? 'success' : 'secondary' }}">
+                                {{ $aluno->ativo ? 'Ativo' : 'Inativo' }}
+                            </span>
+                        </td>
+                        <td>
                             <a href="{{ route('alunos.edit', $aluno->id) }}" class="btn btn-sm btn-warning">
                                 <i class="fas fa-edit"></i>
                             </a>
+                            <form action="{{ route('alunos.destroy', $aluno->id) }}" method="POST" class="d-inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir?')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
                         </td>
                     </tr>
                     @endforeach
                 </tbody>
             </table>
+            
+            <div class="d-flex justify-content-center">
+                {{ $alunos->links() }}
+            </div>
         </div>
-    </div>
-
-    <div class="mt-3">
-        {{ $alunos->links() }}
     </div>
 </div>
 @endsection

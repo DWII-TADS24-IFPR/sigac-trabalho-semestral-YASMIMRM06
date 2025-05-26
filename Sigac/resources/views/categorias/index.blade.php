@@ -2,98 +2,55 @@
 
 @section('content')
 <div class="container">
-    <h1 class="mb-4">Cadastrar Novo Aluno</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Categorias</h1>
+        <a href="{{ route('categorias.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Nova Categoria
+        </a>
+    </div>
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('alunos.store') }}" method="POST">
-                @csrf
-                
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="nome">Nome Completo</label>
-                            <input type="text" class="form-control @error('nome') is-invalid @enderror" 
-                                   id="nome" name="nome" value="{{ old('nome') }}" required>
-                            @error('nome')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="cpf">CPF</label>
-                            <input type="text" class="form-control @error('cpf') is-invalid @enderror" 
-                                   id="cpf" name="cpf" value="{{ old('cpf') }}" required>
-                            @error('cpf')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" class="form-control @error('email') is-invalid @enderror" 
-                                   id="email" name="email" value="{{ old('email') }}" required>
-                            @error('email')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="senha">Senha</label>
-                            <input type="password" class="form-control @error('senha') is-invalid @enderror" 
-                                   id="senha" name="senha" required>
-                            @error('senha')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="curso_id">Curso</label>
-                            <select class="form-control @error('curso_id') is-invalid @enderror" 
-                                    id="curso_id" name="curso_id" required>
-                                <option value="">Selecione um curso</option>
-                                @foreach($cursos as $curso)
-                                    <option value="{{ $curso->id }}" {{ old('curso_id') == $curso->id ? 'selected' : '' }}>
-                                        {{ $curso->nome }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('curso_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                    
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="turma_id">Turma</label>
-                            <select class="form-control @error('turma_id') is-invalid @enderror" 
-                                    id="turma_id" name="turma_id" required>
-                                <option value="">Selecione uma turma</option>
-                                @foreach($turmas as $turma)
-                                    <option value="{{ $turma->id }}" {{ old('turma_id') == $turma->id ? 'selected' : '' }}>
-                                        {{ $turma->nome }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('turma_id')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn btn-primary">Salvar</button>
-                <a href="{{ route('alun
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($categorias as $categoria)
+                    <tr>
+                        <td>{{ $categoria->nome }}</td>
+                        <td>{{ Str::limit($categoria->descricao, 50) }}</td>
+                        <td>
+                            <span class="badge bg-{{ $categoria->ativo ? 'success' : 'secondary' }}">
+                                {{ $categoria->ativo ? 'Ativo' : 'Inativo' }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ route('categorias.edit', $categoria->id) }}" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form action="{{ route('categorias.destroy', $categoria->id) }}" method="POST" class="d-inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza que deseja excluir?')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            
+            <div class="d-flex justify-content-center">
+                {{ $categorias->links() }}
+            </div>
+        </div>
+    </div>
+</div>
+@endsection

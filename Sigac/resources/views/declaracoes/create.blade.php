@@ -12,22 +12,13 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="titulo">Título*</label>
-                            <input type="text" class="form-control @error('titulo') is-invalid @enderror" 
-                                   id="titulo" name="titulo" value="{{ old('titulo') }}" required>
-                            @error('titulo')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        
-                        <div class="form-group">
                             <label for="aluno_id">Aluno*</label>
                             <select class="form-control @error('aluno_id') is-invalid @enderror" 
                                     id="aluno_id" name="aluno_id" required>
                                 <option value="">Selecione um aluno</option>
                                 @foreach($alunos as $aluno)
                                     <option value="{{ $aluno->id }}" {{ old('aluno_id') == $aluno->id ? 'selected' : '' }}>
-                                        {{ $aluno->nome }} ({{ $aluno->curso->sigla }})
+                                        {{ $aluno->nome }} ({{ $aluno->matricula }})
                                     </option>
                                 @endforeach
                             </select>
@@ -35,29 +26,40 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+                        
+                        <div class="form-group">
+                            <label for="tipo">Tipo*</label>
+                            <select class="form-control @error('tipo') is-invalid @enderror" 
+                                    id="tipo" name="tipo" required>
+                                <option value="matricula" {{ old('tipo') == 'matricula' ? 'selected' : '' }}>Matrícula</option>
+                                <option value="frequencia" {{ old('tipo') == 'frequencia' ? 'selected' : '' }}>Frequência</option>
+                                <option value="conclusao" {{ old('tipo') == 'conclusao' ? 'selected' : '' }}>Conclusão</option>
+                                <option value="outra" {{ old('tipo') == 'outra' ? 'selected' : '' }}>Outra</option>
+                            </select>
+                            @error('tipo')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
                     
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label for="comprovante_id">Comprovante (opcional)</label>
-                            <select class="form-control @error('comprovante_id') is-invalid @enderror" 
-                                    id="comprovante_id" name="comprovante_id">
-                                <option value="">Nenhum comprovante vinculado</option>
-                                @foreach($comprovantes as $comprovante)
-                                    <option value="{{ $comprovante->id }}" {{ old('comprovante_id') == $comprovante->id ? 'selected' : '' }}>
-                                        {{ $comprovante->titulo }} - {{ $comprovante->aluno->nome }}
-                                    </option>
-                                @endforeach
+                            <label for="status">Status*</label>
+                            <select class="form-control @error('status') is-invalid @enderror" 
+                                    id="status" name="status" required>
+                                <option value="pendente" {{ old('status') == 'pendente' ? 'selected' : '' }}>Pendente</option>
+                                <option value="emitida" {{ old('status') == 'emitida' ? 'selected' : '' }}>Emitida</option>
+                                <option value="cancelada" {{ old('status') == 'cancelada' ? 'selected' : '' }}>Cancelada</option>
                             </select>
-                            @error('comprovante_id')
+                            @error('status')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                         
                         <div class="form-group">
-                            <label for="data_emissao">Data de Emissão*</label>
-                            <input type="datetime-local" class="form-control @error('data_emissao') is-invalid @enderror" 
-                                   id="data_emissao" name="data_emissao" value="{{ old('data_emissao') }}" required>
+                            <label for="data_emissao">Data de Emissão</label>
+                            <input type="date" class="form-control @error('data_emissao') is-invalid @enderror" 
+                                   id="data_emissao" name="data_emissao" value="{{ old('data_emissao') }}">
                             @error('data_emissao')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -66,30 +68,16 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="conteudo">Conteúdo*</label>
-                    <textarea class="form-control @error('conteudo') is-invalid @enderror" 
-                              id="conteudo" name="conteudo" rows="10" required>{{ old('conteudo') }}</textarea>
-                    @error('conteudo')
+                    <label for="observacoes">Observações</label>
+                    <textarea class="form-control @error('observacoes') is-invalid @enderror" 
+                              id="observacoes" name="observacoes" rows="3">{{ old('observacoes') }}</textarea>
+                    @error('observacoes')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
-                </div>
-
-                <div class="form-group">
-                    <label for="descricao">Descrição (opcional)</label>
-                    <textarea class="form-control @error('descricao') is-invalid @enderror" 
-                              id="descricao" name="descricao" rows="3">{{ old('descricao') }}</textarea>
-                    @error('descricao')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="form-group form-check">
-                    <input type="checkbox" class="form-check-input" id="modelo" name="modelo" value="1" {{ old('modelo') ? 'checked' : '' }}>
-                    <label class="form-check-label" for="modelo">Salvar como modelo</label>
                 </div>
 
                 <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Salvar Declaração
+                    <i class="fas fa-save"></i> Salvar
                 </button>
                 <a href="{{ route('declaracoes.index') }}" class="btn btn-secondary">
                     <i class="fas fa-times"></i> Cancelar
@@ -98,16 +86,4 @@
         </div>
     </div>
 </div>
-
-@section('scripts')
-<script src="https://cdn.tiny.cloud/1/YOUR_API_KEY/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
-<script>
-    tinymce.init({
-        selector: '#conteudo',
-        plugins: 'lists link image table code help wordcount',
-        toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | link image | code',
-        height: 500
-    });
-</script>
-@endsection
 @endsection

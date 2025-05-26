@@ -2,83 +2,115 @@
 
 @section('content')
 <div class="container">
-    <h1 class="mb-4">Lista de Alunos</h1>
-    
-    <div class="mb-3">
-        <a href="{{ route('alunos.create') }}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Novo Aluno
-        </a>
-    </div>
+    <h1 class="mb-4">Novo Aluno</h1>
 
     <div class="card">
         <div class="card-body">
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>CPF</th>
-                        <th>Email</th>
-                        <th>Curso</th>
-                        <th>Turma</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($alunos as $aluno)
-                    <tr>
-                        <td>{{ $aluno->nome }}</td>
-                        <td>{{ $aluno->cpf_formatado }}</td>
-                        <td>{{ $aluno->email }}</td>
-                        <td>{{ $aluno->curso->nome ?? '-' }}</td>
-                        <td>{{ $aluno->turma->nome ?? '-' }}</td>
-                        <td>
-                            <a href="{{ route('alunos.show', $aluno->id) }}" class="btn btn-sm btn-info">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            <a href="{{ route('alunos.edit', $aluno->id) }}" class="btn btn-sm btn-warning">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </tab@extends('layouts.app')
+            <form action="{{ route('alunos.store') }}" method="POST">
+                @csrf
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="nome">Nome*</label>
+                            <input type="text" class="form-control @error('nome') is-invalid @enderror" 
+                                   id="nome" name="nome" value="{{ old('nome') }}" required>
+                            @error('nome')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="cpf">CPF*</label>
+                            <input type="text" class="form-control @error('cpf') is-invalid @enderror" 
+                                   id="cpf" name="cpf" value="{{ old('cpf') }}" required>
+                            @error('cpf')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email*</label>
+                            <input type="email" class="form-control @error('email') is-invalid @enderror" 
+                                   id="email" name="email" value="{{ old('email') }}" required>
+                            @error('email')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="matricula">Matrícula*</label>
+                            <input type="text" class="form-control @error('matricula') is-invalid @enderror" 
+                                   id="matricula" name="matricula" value="{{ old('matricula') }}" required>
+                            @error('matricula')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="data_nascimento">Data de Nascimento*</label>
+                            <input type="date" class="form-control @error('data_nascimento') is-invalid @enderror" 
+                                   id="data_nascimento" name="data_nascimento" value="{{ old('data_nascimento') }}" required>
+                            @error('data_nascimento')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="ativo" name="ativo" 
+                                       value="1" {{ old('ativo') ? 'checked' : '' }}>
+                                <label class="form-check-label" for="ativo">
+                                    Ativo
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-@section('content')
-<div class="container">
-    <h1 class="mb-4">Categorias de Documentos</h1>
-    
-    <div class="mb-3">
-        <a href="{{ route('categorias.create') }}" class="btn btn-primary">
-            <i class="fas fa-plus"></i> Nova Categoria
-        </a>
-    </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="telefone">Telefone</label>
+                            <input type="text" class="form-control @error('telefone') is-invalid @enderror" 
+                                   id="telefone" name="telefone" value="{{ old('telefone') }}">
+                            @error('telefone')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="celular">Celular</label>
+                            <input type="text" class="form-control @error('celular') is-invalid @enderror" 
+                                   id="celular" name="celular" value="{{ old('celular') }}">
+                            @error('celular')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+                </div>
 
-    <div class="card">
-        <div class="card-body">
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Descrição</th>
-                        <th>Curso</th>
-                        <th>Status</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($categorias as $categoria)
-                    <tr>
-                        <td>{{ $categoria->nome }}</td>
-                        <td>{{ Str::limit($categoria->descricao, 50) }}</td>
-                        <td>{{ $categoria->curso->nome ?? 'Geral' }}</td>
-                        <td>
-                            <span class="badge badge-{{ $categoria->ativo ? 'success'le>
+                <div class="form-group">
+                    <label for="endereco">Endereço</label>
+                    <textarea class="form-control @error('endereco') is-invalid @enderror" 
+                              id="endereco" name="endereco" rows="2">{{ old('endereco') }}</textarea>
+                    @error('endereco')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Salvar
+                </button>
+                <a href="{{ route('alunos.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancelar
+                </a>
+            </form>
         </div>
-    </div>
-
-    <div class="mt-3">
-        {{ $alunos->links() }}
     </div>
 </div>
 @endsection
