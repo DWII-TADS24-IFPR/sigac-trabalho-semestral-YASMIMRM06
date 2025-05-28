@@ -1,4 +1,5 @@
 <?php
+<?php
 
 namespace App\Http\Controllers;
 
@@ -10,7 +11,7 @@ class CertificateController extends Controller
     public function generate()
     {
         $user = auth()->user();
-        $totalHours = $user->activities()->approved()->sum('hours');
+        $totalHours = $user->activities()->where('status', 'approved')->sum('hours');
         
         if ($totalHours < 120) {
             return back()->with('error', 'Você não cumpriu o mínimo de 120 horas requeridas');
