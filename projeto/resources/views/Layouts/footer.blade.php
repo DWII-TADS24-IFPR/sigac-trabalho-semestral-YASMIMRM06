@@ -12,7 +12,7 @@
                     <a href="#" class="text-white me-2"><i class="bi bi-linkedin"></i></a>
                 </div>
                 <p class="small mb-0">
-                    © {{ now()->year }} Desenvolvido por [Seu Nome]<br>
+                    © {{ now()->year }} Desenvolvido por Yasmim Russi<br>
                     <a href="/sobre" class="text-white-50">Sobre o projeto</a> | 
                     <a href="/contato" class="text-white-50">Contato</a>
                 </p>

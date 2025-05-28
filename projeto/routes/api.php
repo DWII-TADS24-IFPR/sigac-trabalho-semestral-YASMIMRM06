@@ -1,7 +1,20 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\{
+    AlunoController,
+    CategoriaController,
+    ComprovanteController,
+    CursoController,
+    TurmaController,
+    NivelController,
+    DocumentoController,
+    DeclaracaoController,
+};
 
-Route::get('/test', function () {
-    return response()->json(['message' => 'API funcionando!']);
-});
+use Illuminate\Foundation\Inspiring;
+use Illuminate\Support\Facades\Artisan;
+
+Artisan::command('inspire', function () {
+    $this->comment(Inspiring::quote());
+})->purpose('Display an inspiring quote');
