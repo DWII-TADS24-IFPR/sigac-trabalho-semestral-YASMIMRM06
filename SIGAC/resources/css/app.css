@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Cores verdes simplificadas */
+.bg-verde-claro {
+  background-color: #e8f5e9;
+}
+
+.text-verde-escuro {
+  color: #2e7d32;
+}
+
+.bg-verde-medio {
+  background-color: #4caf50;
+}
+
+.hover\:bg-verde-escuro:hover {
+  background-color: #2e7d32;
+}

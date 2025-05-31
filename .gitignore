@@ -1,0 +1,5 @@
+SIGAC/database/migrations/0001_01_01_000000_create_users_table.php
+SIGAC/database/migrations/2025_05_23_220330_create_alunos_table.php
+SIGAC/database/migrations/2025_05_23_220416_create_comprovantes_table.php
+SIGAC/database/migrations/2025_05_23_220431_create_declaracoes_table.php
+SIGAC/database/migrations/2025_05_23_220438_create_documentos_table.php
