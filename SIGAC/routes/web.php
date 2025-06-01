@@ -1,62 +1,135 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\CursoController;
-use App\Http\Controllers\TurmaController;
-use App\Http\Controllers\EixoController;
-use App\Http\Controllers\NivelController;
-use App\Http\Controllers\CategoriaController;
-use App\Http\Controllers\GraficoController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\VerificationController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AboutController;
+use App\Http\Controllers\Admin\ActivityController;
+use App\Http\Controllers\Admin\StudentController;
+use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Student\StudentActivityController;
+use App\Http\Controllers\Student\ProfileController;
 
-use App\Http\Controllers\AlunoController;
-use App\Http\Controllers\PerfilController;
-use App\Http\Controllers\DeclaracaoController;
-use App\Http\Controllers\AvaliacaoController;
-use App\Http\Controllers\SolicitacaoController;
-use App\Http\Controllers\Auth\AuthenticatedSessionController;
-use App\Http\Middleware\CheckRole;
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Rotas principais do sistema SIGAC - Gerenciamento de Atividades Complementares
+|
+*/
 
+// ==================== ROTAS PÚBLICAS ====================
 Route::get('/', function () {
     return view('welcome');
+})->name('welcome');
+
+Route::get('/about', [AboutController::class, 'index'])->name('about');
+
+// ==================== AUTENTICAÇÃO ====================
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [LoginController::class, 'login']);
+    
+    Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('/register', [RegisterController::class, 'register']);
+    
+    Route::get('/password/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::get('/password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+    Route::post('/password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
 });
 
-//Rotas para autenticação de middleware 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::middleware(['auth', CheckRole::class . ':admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
-    Route::resource('alunos', AlunoController::class);
-    Route::resource('cursos', CursoController::class);
-    Route::resource('turmas', TurmaController::class);
-    Route::resource('eixos', EixoController::class);
-    Route::resource('niveis', NivelController::class);
-    Route::resource('categorias', CategoriaController::class);
-    Route::resource('avaliacoes', AvaliacaoController::class);
-    Route::post('avaliacoes/{id}/aprovar', [AvaliacaoController::class, 'aprovar'])->name('avaliacoes.aprovar');
-    Route::post('avaliacoes/{id}/rejeitar', [AvaliacaoController::class, 'rejeitar'])->name('avaliacoes.rejeitar');
-    Route::resource('graficos', GraficoController::class);
-
-
-});
-
-Route::middleware(['auth', CheckRole::class . ':aluno'])->prefix('aluno')->name('aluno.')->group(function (){
-    Route::get('/dashboard', [AlunoController::class, 'dashboard'])->name('dashboard');
-    Route::resource('perfil', PerfilController::class);
-    Route::resource('solicitacoes', SolicitacaoController::class);
-    Route::resource('declaracoes', DeclaracaoController::class);
-});
-     
+// ==================== VERIFICAÇÃO DE EMAIL ====================
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/email/verify', [VerificationController::class, 'notice'])->name('verification.notice');
+    Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])
+        ->middleware('signed')->name('verification.verify');
+    Route::post('/email/resend', [VerificationController::class, 'resend'])
+        ->middleware('throttle:6,1')->name('verification.resend');
 });
 
-//rota para o redirecionamento para a tela de login ao dar logout
-Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
+// ==================== ÁREA LOGADA ====================
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+    
+    // ========== ROTAS DO ALUNO ==========
+    Route::prefix('student')->middleware('can:isStudent')->group(function () {
+        // Perfil
+        Route::get('/profile', [ProfileController::class, 'show'])->name('student.profile');
+        Route::put('/profile', [ProfileController::class, 'update'])->name('student.profile.update');
+        
+        // Atividades Complementares
+        Route::prefix('activities')->group(function () {
+            Route::get('/', [StudentActivityController::class, 'index'])->name('student.activities.index');
+            Route::get('/create', [StudentActivityController::class, 'create'])->name('student.activities.create');
+            Route::post('/', [StudentActivityController::class, 'store'])->name('student.activities.store');
+            Route::get('/export', [StudentActivityController::class, 'export'])->name('student.activities.export');
+            Route::get('/certificate', [StudentActivityController::class, 'certificate'])->name('student.certificate');
+            
+            Route::prefix('{activity}')->group(function () {
+                Route::get('/', [StudentActivityController::class, 'show'])->name('student.activities.show');
+                Route::get('/edit', [StudentActivityController::class, 'edit'])->name('student.activities.edit');
+                Route::put('/', [StudentActivityController::class, 'update'])->name('student.activities.update');
+                Route::delete('/', [StudentActivityController::class, 'destroy'])->name('student.activities.destroy');
+            });
+        });
+    });
+    
+    // ========== ROTAS DO ADMIN ==========
+    Route::prefix('admin')->middleware('can:isAdmin')->group(function () {
+        // Dashboard
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+        
+        // Atividades
+        Route::prefix('activities')->group(function () {
+            Route::get('/', [ActivityController::class, 'index'])->name('admin.activities.index');
+            Route::get('/export', [ActivityController::class, 'export'])->name('admin.activities.export');
+            
+            Route::prefix('{activity}')->group(function () {
+                Route::get('/review', [ActivityController::class, 'review'])->name('admin.activities.review');
+                Route::put('/', [ActivityController::class, 'update'])->name('admin.activities.update');
+            });
+        });
+        
+        // Alunos
+        Route::resource('students', StudentController::class)->names([
+            'index' => 'admin.students.index',
+            'create' => 'admin.students.create',
+            'store' => 'admin.students.store',
+            'show' => 'admin.students.show',
+            'edit' => 'admin.students.edit',
+            'update' => 'admin.students.update',
+            'destroy' => 'admin.students.destroy'
+        ]);
+        
+        // Categorias
+        Route::resource('categories', CategoryController::class)->except(['show'])->names([
+            'index' => 'admin.categories.index',
+            'create' => 'admin.categories.create',
+            'store' => 'admin.categories.store',
+            'edit' => 'admin.categories.edit',
+            'update' => 'admin.categories.update',
+            'destroy' => 'admin.categories.destroy'
+        ]);
+        
+        // Relatórios
+        Route::prefix('reports')->group(function () {
+            Route::get('/', [DashboardController::class, 'reports'])->name('admin.reports');
+            Route::get('/students-hours', [DashboardController::class, 'studentsHours'])->name('admin.reports.students-hours');
+            Route::get('/activities-by-category', [DashboardController::class, 'activitiesByCategory'])->name('admin.reports.activities-by-category');
+        });
+    });
+});
 
-require __DIR__ . '/auth.php';
+// ==================== FALLBACK ROUTE ====================
+Route::fallback(function () {
+    return response()->view('errors.404', [], 404);
+});
