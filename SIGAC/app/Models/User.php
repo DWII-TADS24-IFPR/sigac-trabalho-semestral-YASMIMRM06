@@ -15,7 +15,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
-        'role_id'
+        'role_id',
+        'curso_id'
     ];
 
     protected $hidden = [
@@ -28,8 +29,13 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     protected $attributes = [
-        'role_id' => 2 // Valor padrão para aluno
+        'curso_id' => null
     ];
+
+    public function curso()
+    {
+        return $this->belongsTo(\App\Models\Curso::class);
+    }
 
     public function isAdmin()
     {

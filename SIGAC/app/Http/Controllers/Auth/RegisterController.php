@@ -4,93 +4,63 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Curso;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules;
-use Illuminate\View\View;
+use Illuminate\Validation\Rule;
 
 class RegisterController extends Controller
 {
-    /**
-     * Mostra o formulário de registro
-     */
-    public function showRegistrationForm(): View
+    public function showRegistrationForm()
     {
         return view('auth.register', [
-            'roles' => $this->getRoles()
+            'cursos' => Curso::orderBy('nome')->get(),
+            'roles' => [
+                1 => 'Administrador',
+                2 => 'Aluno'
+            ]
         ]);
     }
 
-    /**
-     * Processa o registro de um novo usuário
-     */
-    public function register(Request $request): RedirectResponse
+    public function register(Request $request)
     {
-        $this->validator($request->all())->validate();
+        $validatedData = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => [
+                'required', 
+                'string', 
+                'email', 
+                'max:255', 
+                'unique:users',
+                'regex:/@.+\.(edu|ac)\..+$/i'
+            ],
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role_id' => ['required', 'integer', Rule::in([1, 2])],
+            'curso_id' => ['required_if:role_id,2', 'nullable', 'exists:cursos,id']
+        ], [
+            'email.regex' => 'Por favor, use um e-mail institucional válido',
+            'curso_id.required_if' => 'O campo curso é obrigatório para alunos'
+        ]);
 
-        event(new Registered($user = $this->create($request->all())));
+        $userData = [
+            'name' => $validatedData['name'],
+            'email' => $validatedData['email'],
+            'password' => Hash::make($validatedData['password']),
+            'role_id' => $validatedData['role_id'],
+            'curso_id' => $validatedData['role_id'] == 2 ? $validatedData['curso_id'] : null,
+            'email_verified_at' => $validatedData['role_id'] == 1 ? now() : null
+        ];
+
+        $user = User::create($userData);
+
+        event(new Registered($user));
 
         Auth::login($user);
 
-        return $this->registered($request, $user)
-                        ?: redirect($this->redirectPath());
-    }
-
-    /**
-     * Valida os dados do formulário
-     */
-    protected function validator(array $data)
-    {
-        return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'role_id' => ['required', 'integer', 'in:1,2'],
-        ]);
-    }
-
-    /**
-     * Cria o novo usuário no banco de dados
-     */
-    protected function create(array $data)
-    {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'role_id' => $data['role_id'],
-        ]);
-    }
-
-    /**
-     * Obtém os tipos de usuário disponíveis
-     */
-    protected function getRoles(): array
-    {
-        return [
-            1 => 'Administrador',
-            2 => 'Aluno'
-        ];
-    }
-
-    /**
-     * Redireciona após o registro
-     */
-    protected function registered(Request $request, $user)
-    {
-        // Lógica adicional após registro pode ser adicionada aqui
-        return null;
-    }
-
-    /**
-     * Define para onde redirecionar após registro
-     */
-    protected function redirectPath(): string
-    {
-        return route('home');
+        return redirect()->route('home')
+            ->with('success', 'Cadastro realizado com sucesso!');
     }
 }
