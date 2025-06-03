@@ -49,3 +49,25 @@ a {
     background-color: #227dc7;
     border-color: #227dc7;
 }
+/* Estilos base - SIGAC */
+:root {
+    --primary-color: #0066cc;
+    --secondary-color: #f0f0f0;
+    --text-color: #333;
+    --light-gray: #f9f9f9;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: white;
+    margin: 0;
+    padding: 0;
+}
+
+.sigac-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 20px;
+}

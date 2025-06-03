@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -7,33 +8,18 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    protected $redirectTo = '/home';
-
-    public function showLoginForm()
+    public function __construct()
     {
-        return view('auth.login');
+        $this->middleware('guest')->except('logout');
     }
 
-    public function login(Request $request)
+    protected function authenticated(Request $request, $user)
     {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
-
-        if (Auth::attempt($credentials, $request->remember)) {
-            $request->session()->regenerate();
-            
-            if (auth()->user()->isAdmin()) {
-                return redirect()->route('admin.dashboard')
-                    ->with('success', 'Login administrativo realizado!');
-            }
-            
-            return redirect()->intended(route('home'))
-                ->with('success', 'Login realizado com sucesso!');
+        if ($user->user_type === 'admin') {
+            return redirect()->route('admin.dashboard');
         }
 
-        return back()->withErrors(['email' => 'Credenciais inválidas']);
+        return redirect()->route('student.dashboard');
     }
 
     public function logout(Request $request)
@@ -41,6 +27,7 @@ class LoginController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+        
         return redirect('/');
     }
 }
