@@ -60,6 +60,13 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     
+    // Rota genérica para atividades que redireciona conforme o tipo de usuário
+    Route::get('/activities', function () {
+        return auth()->user()->isAdmin() 
+            ? redirect()->route('admin.activities.index')
+            : redirect()->route('student.activities.index');
+    })->name('atividades.index');
+    
     // ========== ROTAS DO ALUNO ==========
     Route::prefix('student')->middleware('can:isStudent')->group(function () {
         // Perfil

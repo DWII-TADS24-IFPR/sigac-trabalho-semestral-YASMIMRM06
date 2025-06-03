@@ -1,40 +1,43 @@
 <?php
-
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use Notifiable;
 
     protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'role', // Adicione este campo
+        'name', 'email', 'password', 'role_id', 'curso_id'
     ];
 
     protected $hidden = [
-        'password',
-        'remember_token',
+        'password', 'remember_token',
     ];
 
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
-    
-    // Métodos para verificação de role
     public function isAdmin()
     {
-        return $this->role === 'admin';
+        return $this->role_id === 1;
     }
 
     public function isStudent()
     {
-        return $this->role === 'student';
+        return $this->role_id === 2;
+    }
+
+    public function curso()
+    {
+        return $this->belongsTo(Curso::class);
+    }
+
+    public function activities()
+    {
+        return $this->hasMany(Activity::class);
+    }
+
+    public function approvedActivities()
+    {
+        return $this->activities()->where('status', 'approved');
     }
 }
