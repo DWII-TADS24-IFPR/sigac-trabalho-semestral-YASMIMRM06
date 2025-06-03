@@ -8,18 +8,32 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    public function __construct()
+    public function showLoginForm()
     {
-        $this->middleware('guest')->except('logout');
+        return view('auth.login');
     }
 
-    protected function authenticated(Request $request, $user)
+    public function login(Request $request)
     {
-        if ($user->user_type === 'admin') {
-            return redirect()->route('admin.dashboard');
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            
+            // Redireciona conforme o tipo de usuário
+            if (auth()->user()->isAdmin()) {
+                return redirect()->route('admin.dashboard');
+            }
+            
+            return redirect()->route('student.activities.index');
         }
 
-        return redirect()->route('student.dashboard');
+        return back()->withErrors([
+            'email' => 'As credenciais fornecidas não correspondem aos nossos registros.',
+        ])->onlyInput('email');
     }
 
     public function logout(Request $request)
@@ -27,7 +41,6 @@ class LoginController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        
         return redirect('/');
     }
 }
