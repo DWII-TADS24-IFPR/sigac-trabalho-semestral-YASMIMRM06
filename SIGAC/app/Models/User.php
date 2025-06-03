@@ -15,8 +15,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'name',
         'email',
         'password',
-        'role_id',
-        'curso_id'
+        'role', // Adicione este campo
     ];
 
     protected $hidden = [
@@ -27,23 +26,15 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-    protected $attributes = [
-        'curso_id' => null
-    ];
-
-    public function curso()
-    {
-        return $this->belongsTo(\App\Models\Curso::class);
-    }
-
+    
+    // Métodos para verificação de role
     public function isAdmin()
     {
-        return $this->role_id === 1;
+        return $this->role === 'admin';
     }
 
     public function isStudent()
     {
-        return $this->role_id === 2;
+        return $this->role === 'student';
     }
 }
