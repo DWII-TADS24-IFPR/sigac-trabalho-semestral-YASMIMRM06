@@ -55,7 +55,15 @@
                                     </div>
                                 @enderror
                             </div>
-                            
+                            <div class="mb-3">
+                                <label for="course_type" class="form-label">Curso</label>
+                                <select id="course_type" class="form-select"
+                                        name="curso_id" required>
+                                    <option value="" hidden selected>Selecione seu curso...</option>
+                                    <option value="1">Info</option>
+                                    <option value="2" >Enfermagem</option>
+                                </select>
+                            </div>
                             <div class="mb-3">
                                 <label for="password" class="form-label">Senha</label>
                                 <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" 
