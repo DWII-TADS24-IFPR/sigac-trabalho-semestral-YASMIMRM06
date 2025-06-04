@@ -2,6 +2,8 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+
+use App\Http\Models\Categoria;
 use App\Models\Activity;
 use Illuminate\Http\Request;
 
@@ -21,7 +23,8 @@ class StudentActivityController extends Controller
 
     public function create()
     {
-        return view('student.activities.create');
+        $categories = [ ];
+        return view('student.activities.create')->with('categories');
     }
 
     public function store(Request $request)

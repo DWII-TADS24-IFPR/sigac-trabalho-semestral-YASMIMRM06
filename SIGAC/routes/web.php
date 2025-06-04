@@ -49,11 +49,11 @@ Route::middleware('guest')->group(function () {
     Route::post('/password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
 });
 
-// Logout
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    // Logout
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // ==================== VERIFICAÇÃO DE EMAIL ====================
-Route::middleware('auth')->group(function () {
+    Route::middleware('auth')->group(function () {
     Route::get('/email/verify', [VerificationController::class, 'notice'])->name('verification.notice');
     Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])
         ->middleware('signed')->name('verification.verify');
@@ -62,7 +62,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // ==================== ÁREA LOGADA ====================
-Route::middleware(['auth', 'verified'])->group(function () {
+    Route::middleware(['auth', 'verified'])->group(function () {
     // Página inicial após login
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     
@@ -95,28 +95,34 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/certificate', [StudentActivityController::class, 'certificate'])->name('student.certificate');
             
             // Operações em atividades específicas
-            Route::prefix('{activity}')->group(function () {
+                Route::prefix('{activity}')->group(function () {
                 Route::get('/', [StudentActivityController::class, 'show'])->name('student.activities.show');
                 Route::get('/edit', [StudentActivityController::class, 'edit'])->name('student.activities.edit');
                 Route::put('/', [StudentActivityController::class, 'update'])->name('student.activities.update');
                 Route::delete('/', [StudentActivityController::class, 'destroy'])->name('student.activities.destroy');
+                Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+            // Atividades Complementares (RF03)
+                Route::get('/atividades/create', [App\Http\Controllers\AtividadeController::class, 'create'])->name('atividades.create');
+                Route::post('/atividades/store', [App\Http\Controllers\AtividadeController::class, 'store'])->name('atividades.store');
+                Route::get('/minhas-atividades', [App\Http\Controllers\AtividadeController::class, 'index'])->name('minhas-atividades');
+    
+            // Declaração (RF04)
+                Route::get('/declaracao', [App\Http\Controllers\DeclaracaoController::class, 'gerar'])->name('declaracao');
             });
         });
     });
+});
     
     // ========== ROTAS DO ADMINISTRADOR ==========
-    Route::prefix('admin')->middleware('can:isAdmin')->group(function () {
+                Route::prefix('admin')->middleware('can:isAdmin')->group(function () {
         // Dashboard administrativo
-        Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
-        
+                Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
         // Gerenciamento de atividades (RF07)
-        Route::prefix('activities')->group(function () {
+                 Route::prefix('activities')->group(function () {
             // Listagem de todas as atividades
             Route::get('/', [ActivityController::class, 'index'])->name('admin.activities.index');
-            
             // Exportação de dados
             Route::get('/export', [ActivityController::class, 'export'])->name('admin.activities.export');
-            
             // Operações em atividades específicas
             Route::prefix('{activity}')->group(function () {
                 // Revisão e avaliação de atividades
@@ -125,6 +131,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
             });
         });
         
+        Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+        Route::get('/dashboard', [App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('admin.dashboard');
+        Route::get('/solicitacoes', [App\Http\Controllers\Admin\SolicitacaoController::class, 'index'])->name('admin.solicitacoes');
+        Route::post('/aprovar/{id}', [App\Http\Controllers\Admin\SolicitacaoController::class, 'aprovar'])->name('admin.aprovar');
+        Route::post('/rejeitar/{id}', [App\Http\Controllers\Admin\SolicitacaoController::class, 'rejeitar'])->name('admin.rejeitar');
+});
         // Gerenciamento de alunos (RF06)
         Route::resource('students', StudentController::class)->names([
             'index' => 'admin.students.index',
@@ -161,8 +173,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/by-class', [ReportController::class, 'byClass'])->name('admin.reports.by-class');
         });
     });
-});
-
 // ==================== ROTAS DE API ====================
 Route::prefix('api')->middleware('auth:sanctum')->group(function () {
     // API para gráficos do dashboard
