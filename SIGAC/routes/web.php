@@ -9,13 +9,12 @@ use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\Auth\Admin\ActivityController;
-use App\Http\Controllers\Admin\StudentController;
-use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Student\StudentController;
 use App\Http\Controllers\Auth\Admin\DashboardController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\Student\StudentActivityController;
 use App\Http\Controllers\ProfileController;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
